@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Familiar, Curso, Tatuaje
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
-from .forms import CursoForm, TatuajeForm
+from .models import Familiar, Curso, Tatuaje, Auto
+
+from .forms import CursoForm, TatuajeForm, AutoForm
 
 # Create your views here.
 from django.http import HttpResponse
@@ -75,3 +78,31 @@ def buscar_cursos(request):
         nombre = request.GET.get('nombre', '')
         cursos = Curso.objects.filter(nombre__icontains=nombre)
         return render(request, 'mi_primera_app/cursos.html', {'cursos': cursos, 'nombre': nombre})
+    
+
+class Autolistview(ListView):
+    model = Auto
+    template_name = 'mi_primera_app/listar_autos.html'
+    context_object_name = 'autos'
+
+class AutoCreateview(CreateView):
+    model = Auto
+    form_class = AutoForm
+    template_name = 'mi_primera_app/crear_auto.html'
+    success_url = reverse_lazy('listar-autos')
+
+class AutoDetailView(DetailView):
+    model = Auto
+    template_name = 'mi_primera_app/detalle_auto.html'
+    context_object_name = 'auto'
+
+class AutoUpdateView(UpdateView):
+    model = Auto
+    form_class = AutoForm
+    template_name = 'mi_primera_app/crear_auto.html'
+    success_url = reverse_lazy('listar-autos')
+
+class AutoDeleteView(DeleteView):
+    model = Auto
+    template_name = 'mi_primera_app/eliminar_auto.html'
+    success_url = reverse_lazy('listar-autos')
