@@ -6,6 +6,8 @@ from .models import Familiar, Curso, Tatuaje, Auto
 
 from .forms import CursoForm, TatuajeForm, AutoForm
 
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 from django.http import HttpResponse
 
@@ -31,6 +33,7 @@ def crear_familiar(request, nombre):
         nuevo_familiar.save()
     return render(request, "mi_primera_app/crear_familiar.html", {"nombre": nombre})
 
+@login_required
 def crear_curso(request):
     if request.method =="POST":
         form = CursoForm(request.POST)
