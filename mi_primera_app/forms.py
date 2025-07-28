@@ -1,5 +1,6 @@
 from django import forms
-from .models import Auto
+from .models import Inscripcion
+from usuarios.models import Tatuador
 
 class CursoForm(forms.Form):
     nombre = forms.CharField()
@@ -11,16 +12,30 @@ class CursoForm(forms.Form):
 
 
 
-class TatuajeForm(forms.Form):
+class TurnoTatuajeForm(forms.Form):
     nombre = forms.CharField(label="Nombre", max_length=100)
-    descripcion = forms.CharField(widget=forms.Textarea,required=False)
+    descripcion = forms.CharField(widget=forms.Textarea, required=False)
     fecha_turno = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     email_contacto = forms.EmailField()
     edad_cliente = forms.IntegerField(min_value=18, initial=18)
+    tatuador = forms.ModelChoiceField(
+        queryset=Tatuador.objects.filter(disponible=True),
+        required=False,
+        empty_label="Seleccione un tatuador",
+        label="Tatuador"
+    )
 
-
-class AutoForm(forms.ModelForm):
+class TatuadorDataForm(forms.ModelForm):
     class Meta:
-        model = Auto
-        fields = ['modelo', 'marca', 'descripcion']
-        
+        model = Tatuador
+        fields = [
+            'nombre',
+            'especialidad',
+            'disponible',  
+            'email'        
+        ]
+
+class InscripcionForm(forms.ModelForm):
+    class Meta:
+        model = Inscripcion
+        fields = []

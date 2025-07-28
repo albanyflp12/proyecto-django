@@ -51,6 +51,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+LOGIN_REDIRECT_URL = 'perfil_redirect'
+
 ROOT_URLCONF = 'ejemplo_django.urls'
 
 TEMPLATES = [
@@ -63,10 +68,12 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'usuarios.context_processors.tipo_usuario',
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'ejemplo_django.wsgi.application'
 

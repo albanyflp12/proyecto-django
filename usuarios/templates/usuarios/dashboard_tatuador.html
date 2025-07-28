@@ -1,0 +1,29 @@
+{% extends "padre.html" %}
+
+{% block title %}Dashboard Tatuador{% endblock %}
+
+{% block content %}
+<h2>Dashboard Tatuador</h2>
+
+<h3>Estilos Inscritos</h3>
+{% if estilos_inscritos %}
+    <ul>
+        {% for estilo in estilos_inscritos %}
+            <li>{{ estilo.nombre }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No estás inscrito en ningún estilo.</p>
+{% endif %}
+
+<h3>Citas Asignadas</h3>
+{% if citas_asignadas %}
+    <ul>
+        {% for cita in citas_asignadas %}
+            <li>{{ cita.fecha }} - Cliente: {{ cita.usuario.username }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No tenés citas asignadas.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "padre.html" %}
+
+{% block content %}
+
+<h2> Lista de tatuadores <h2/>
+
+<ul>
+    {% for tatuador in tatuadores %}
+    <li>
+        {{ tatuador.nombre }}
+        <a href="{% url 'detalle-tatuador' tatuador.pk %}">Ver detalle</a>
+        <a href="{% url 'editar-tatuador' tatuador.pk %}">Editar</a>
+        <a href="{% url 'eliminar-tatuador' tatuador.pk %}">Eliminar</a>
+    </li>
+    {% empty %}
+    <li>No hay tatuadores disponibles.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

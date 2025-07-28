@@ -12,14 +12,22 @@
         max-width: 500px;
         margin: 1rem auto;
     ">
-    <h2 style="text-align: center; margin-bottom: 1.5rem;">Personal</h2>
-        {% if user.avatar %}
-        <img style="width: 200px; height: 200px" src="{{user.avatar.imagen.url}}" alt="Imagen de avatar">
-        {% endif %}
-<p>Nombre de usuario: {{user.username}}</p>
-<p>Primer nombre: {{user.first_name}}</p>
-<p>Primer nombre: {{user.last_name}}</p>
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Personal</h2>
+{% if user.avatar and user.avatar.imagen %}
+    <img style="width: 200px; height: 200px" src="{{ user.avatar.imagen.url }}" alt="Imagen de avatar">
+{% else %}
+    <p>No tienes avatar cargado.</p>
+{% endif %}
 
+        <p>Nombre de usuario: {{user.username}}</p>
+        <p>Primer nombre: {{user.first_name}}</p>
+        <p>Apellido: {{user.last_name}}</p>
+
+        <div style="text-align: center; margin-top: 1rem;">
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary" style="margin-right: 1rem;">Editar Perfil</a>
+            <a href="{% url 'avatar-update' %}" class="btn btn-secondary">Actualizar Avatar</a>
+        </div>
+    </div>
 </div>
-</div>
+
 {% endblock %}

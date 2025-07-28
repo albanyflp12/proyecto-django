@@ -1,0 +1,35 @@
+{% extends "padre.html" %}
+
+{% block title %}Dashboard Usuario{% endblock %}
+
+{% block content %}
+<h2>Dashboard Usuario</h2>
+
+<!-- Botones funcionales -->
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'crear-turno-tatuaje' %}" class="btn btn-primary">Crear turno de tatuaje</a>
+    <a href="{% url 'cursos' %}" class="btn btn-secondary">Ver cursos disponibles</a>
+</div>
+
+<h3>Cursos Inscritos</h3>
+{% if cursos_inscritos %}
+    <ul>
+        {% for curso in cursos_inscritos %}
+            <li>{{ curso.nombre }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No estás inscrito en ningún curso aún.</p>
+{% endif %}
+
+<h3>Citas Agendadas</h3>
+{% if citas_agendadas %}
+    <ul>
+        {% for cita in citas_agendadas %}
+            <li>{{ cita.fecha_turno|date:"d/m/Y" }} - {{ cita.email_contacto }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No tenés citas agendadas.</p>
+{% endif %}
+{% endblock %}

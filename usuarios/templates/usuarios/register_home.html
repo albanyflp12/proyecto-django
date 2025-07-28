@@ -1,0 +1,20 @@
+{% extends "padre.html" %}
+{% block content %}
+<div class="container">
+    <h2> Elige el tipo de registro: </h2>
+    <ul>
+        <li>
+            <a href="{% url 'register_usuario' %}" class="btn-link">Registrar Usuario</a>
+            <p class="description">Nota: Para usuarios que quieran hacer cursos y agendar tatuajes.</p>
+        </li>
+        <li>
+            <a href="{% url 'register_profesor' %}" class="btn-link">Registrar Profesor</a>
+            <p class="description">Nota: Profesionales que quieran dar cursos enfocados a estilos de tatuajes.</p>
+        </li>
+        <li>
+            <a href="{% url 'register_tatuador' %}" class="btn-link">Registrar Tatuador</a>
+            <p class="description">Nota: Tatuadores que quieran ofrecer sus servicios según su especialidad.</p>
+        </li>
+    </ul>
+</div>
+{% endblock %}

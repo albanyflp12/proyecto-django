@@ -1,0 +1,15 @@
+{% extends "padre.html" %}
+
+{% block title %}Confirmar Cancelación{% endblock %}
+
+{% block content %}
+<h2>¿Querés cancelar el turno?</h2>
+
+<p><strong>Turno:</strong> {{ turno.nombre }} - {{ turno.fecha_turno|date:"d/m/Y" }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Confirmar Cancelación</button>
+    <a href="{% url 'lista_turnos_tatuaje' %}" style="margin-left: 10px;">Volver</a>
+</form>
+{% endblock %}

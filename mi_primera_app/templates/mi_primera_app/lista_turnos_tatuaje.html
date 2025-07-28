@@ -1,0 +1,27 @@
+{% extends "padre.html" %}
+
+{% block title %}Mis Turnos de Tatuaje{% endblock %}
+
+{% block content %}
+<h2>Mis Turnos de Tatuaje</h2>
+
+{% if turnos %}
+    <ul>
+        {% for turno in turnos %}
+            <li>
+                {{ turno.fecha_turno|date:"d/m/Y" }} - {{ turno.nombre }}
+                {% if turno.tatuador %}
+                    (Tatuador: {{ turno.tatuador.nombre }})
+                {% endif %}
+                <form method="post" action="{% url 'cancelar_turno_tatuaje' turno.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color: #dc3545; color: white; border: none; border-radius: 5px; padding: 3px 8px; cursor: pointer;">Cancelar</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No tenés turnos agendados.</p>
+{% endif %}
+
+{% endblock %}

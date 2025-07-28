@@ -1,0 +1,24 @@
+{% extends "padre.html" %}
+{% block title %} Detalle del curso {% endblock %}
+
+{% block content %}
+<div style="padding: 2rem;">
+    <h2>{{ curso.nombre }}</h2>
+    <p>{{ curso.descripcion }}</p>
+    <p><strong>Fecha de inicio:</strong> {{ curso.fecha_inicio }}</p>
+    <p><strong>Duración:</strong> {{ curso.duracion_semanas }} semanas</p>
+
+    <h3>Inscriptos:</h3>
+    {% if inscriptos %}
+        <ul>
+            {% for inscripcion in inscriptos %}
+                <li>{{ inscripcion.usuario.nombre }} - {{ inscripcion.usuario.email }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay alumnos inscritos aún.</p>
+    {% endif %}
+
+    <a href="{% url 'cursos' %}" style="margin-top: 1rem; display: inline-block;">← Volver a cursos</a>
+</div>
+{% endblock %}
