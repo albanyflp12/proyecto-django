@@ -1,0 +1,33 @@
+{% extends "padre.html" %}
+
+{% block title %}Detalle del turno de tatuaje{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem;">
+    <h2>Detalle del turno de tatuaje</h2>
+
+    <p><strong>Nombre:</strong> {{ turno.nombre }}</p>
+    <p><strong>Descripción:</strong> {{ turno.descripcion }}</p>
+    <p><strong>Fecha del turno:</strong> {{ turno.fecha_turno|date:"d/m/Y" }}</p>
+    <p><strong>Email contacto:</strong> {{ turno.email_contacto }}</p>
+    <p><strong>Edad cliente:</strong> {{ turno.edad_cliente }}</p>
+
+    <p><strong>Tatuador:</strong>
+        {% if turno.tatuador %}
+            {{ turno.tatuador.nombre }} - {{ turno.tatuador.email }}
+        {% else %}
+            Sin tatuador asignado
+        {% endif %}
+    </p>
+
+    <p><strong>Estilo:</strong>
+        {% if turno.estilo %}
+            {{ turno.estilo.nombre }}
+        {% else %}
+            No especificado
+        {% endif %}
+    </p>
+
+    <a href="{% url 'dashboard_usuario' %}" class="btn btn-primary">Volver al dashboard</a>
+</div>
+{% endblock %}

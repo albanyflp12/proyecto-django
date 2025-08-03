@@ -4,9 +4,9 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from .models import Familiar, Curso, Tatuaje, Inscripcion
-from usuarios.models import Usuario, Tatuador, Profesor
+from usuarios.models import Usuario, Tatuador, Profesor, EstiloTatuaje
 
-from .forms import CursoForm, TurnoTatuajeForm, TatuadorDataForm
+from .forms import CursoForm, TurnoTatuajeForm
 
 from django.contrib.auth.decorators import login_required
 
@@ -17,7 +17,10 @@ def home(request):
     return render(request, 'mi_primera_app/home.html')
 
 def tattoo_style(request):
-    return render(request, 'mi_primera_app/tattoo_style.html')
+    estilos = EstiloTatuaje.objects.prefetch_related('creador')  # o el related_name correcto
+    return render(request, 'mi_primera_app/tattoo_style.html', {
+        'estilos': estilos,
+    })
 
 def acerca_de(request):
     return render(request, 'mi_primera_app/acerca_de.html')
@@ -47,35 +50,65 @@ def crear_curso(request):
     if request.method == "POST":
         form = CursoForm(request.POST)
         if form.is_valid():
-            profesor = Profesor.objects.get(user=request.user)  # obtenemos el profesor logueado
-
-            nuevo_curso = Curso(
-                nombre=form.cleaned_data['nombre'],
-                descripcion=form.cleaned_data['descripcion'],
-                duracion_semanas=form.cleaned_data['duracion_semanas'],
-                fecha_inicio=form.cleaned_data['fecha_inicio'],
-                activo=form.cleaned_data['activo'],
-                profesor=profesor  # lo asignamos al curso
-            )
-            nuevo_curso.save()
-            return redirect('dashboard_profesor')  # redirige al dashboard del profesor
+            curso = form.save(commit=False)
+            profesor = Profesor.objects.get(user=request.user)
+            curso.profesor = profesor
+            curso.save()
+            return redirect('dashboard_profesor')
     else:
         form = CursoForm()
-    
+
     return render(request, "mi_primera_app/crear_curso.html", {"form": form})
 
 @login_required
 def detalle_curso(request, curso_id):
     curso = get_object_or_404(Curso, id=curso_id)
+    puede_ver_inscriptos = False
+    ya_inscripto = False
+
+    if hasattr(request.user, 'userprofile') and request.user.userprofile.tipo == 'profesor':
+        profesor = get_object_or_404(Profesor, user=request.user)
+        puede_ver_inscriptos = (curso.profesor == profesor)
+
+    if hasattr(request.user, 'userprofile') and request.user.userprofile.tipo == 'usuario':
+        usuario = get_object_or_404(Usuario, user=request.user)
+        ya_inscripto = Inscripcion.objects.filter(usuario=usuario, curso=curso).exists()
+
     inscriptos = curso.inscripciones.select_related('usuario')
 
     return render(request, "mi_primera_app/detalle_curso.html", {
         "curso": curso,
         "inscriptos": inscriptos,
+        "ya_inscripto": ya_inscripto,
+        "puede_ver_inscriptos": puede_ver_inscriptos,
     })
+    
+class CursoUpdateView(UpdateView):
+    model = Curso
+    form_class = CursoForm
+    template_name = 'mi_primera_app/editar_curso.html'  # o el template que uses para crear/editar cursos
+
+    def get_success_url(self):
+        return reverse_lazy('dashboard_profesor')
+
+class CursoDeleteView(DeleteView):
+    model = Curso
+    template_name = 'mi_primera_app/eliminar_curso.html'  # creamos este ahora
+    success_url = reverse_lazy('dashboard_profesor')
+
+@login_required
+def cursos_profesor(request):
+    profesor = request.user.profesor  # Asume que user tiene un profesor asociado
+    cursos = Curso.objects.filter(profesor=profesor)
+    return render(request, 'mi_primera_app/cursos_profesor.html', {'cursos': cursos})
 
 @login_required
 def inscribirse_curso(request, curso_id):
+    # Validación de tipo de usuario
+    if not hasattr(request.user, 'userprofile') or request.user.userprofile.tipo != 'usuario':
+        messages.error(request, 'Solo los usuarios pueden inscribirse a cursos.')
+        return redirect('cursos')
+
     curso = get_object_or_404(Curso, id=curso_id)
     usuario = get_object_or_404(Usuario, user=request.user)
 
@@ -85,7 +118,20 @@ def inscribirse_curso(request, curso_id):
         Inscripcion.objects.create(usuario=usuario, curso=curso)
         messages.success(request, "Te has inscrito correctamente.")
 
-    return redirect('detalle_curso', curso_id=curso.id)  # ajustá este nombre a tu URL
+    return redirect('detalle_curso', curso_id=curso.id)
+
+def cancelar_inscripcion(request, curso_id):
+    usuario = get_object_or_404(Usuario, user=request.user)
+    curso = get_object_or_404(Curso, id=curso_id)
+    inscripcion = Inscripcion.objects.filter(usuario=usuario, curso=curso).first()
+
+    if inscripcion:
+        inscripcion.delete()
+        messages.success(request, "Te has dado de baja del curso correctamente.")
+    else:
+        messages.error(request, "No estás inscrito en este curso.")
+
+    return redirect('dashboard_usuario')
     
 def cursos(request):
     cursos = Curso.objects.all()
@@ -99,22 +145,41 @@ def buscar_cursos(request):
 
 @login_required
 def crear_turno_tatuaje(request):
-    if request.method == "POST":
+    tatuador_id = request.GET.get('tatuador_id')
+    if request.method == 'POST':
         form = TurnoTatuajeForm(request.POST)
         if form.is_valid():
-            nuevo_tatuaje = Tatuaje(
-                nombre=form.cleaned_data['nombre'],
-                descripcion=form.cleaned_data['descripcion'],
-                fecha_turno=form.cleaned_data['fecha_turno'],
-                email_contacto=form.cleaned_data['email_contacto'],
-                edad_cliente=form.cleaned_data['edad_cliente'],
-                tatuador=form.cleaned_data.get('tatuador')  # asignamos el FK aquí
-            )
-            nuevo_tatuaje.save()
-            return redirect('home')
+            turno = form.save(commit=False)
+            turno.save()
+            return redirect('dashboard_usuario')
     else:
-        form = TurnoTatuajeForm()
-    return render(request, "mi_primera_app/crear_turno_tatuaje.html", {"form": form})
+        initial = {}
+        if tatuador_id:
+            initial['tatuador'] = tatuador_id
+        form = TurnoTatuajeForm(initial=initial)
+    return render(request, 'mi_primera_app/crear_turno_tatuaje.html', {'form': form})
+
+@login_required
+def detalle_turno_tatuaje(request, turno_id):
+    turno = get_object_or_404(Tatuaje, id=turno_id, email_contacto=request.user.usuario.email)
+
+    return render(request, 'mi_primera_app/detalle_turno_tatuaje.html', {
+        'turno': turno,
+    })
+
+def editar_turno_tatuaje(request, turno_id):
+    turno = get_object_or_404(Tatuaje, id=turno_id)
+
+    if request.method == 'POST':
+        form = TurnoTatuajeForm(request.POST, instance=turno)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Turno actualizado correctamente.")
+            return redirect('dashboard_usuario')
+    else:
+        form = TurnoTatuajeForm(instance=turno)
+
+    return render(request, 'mi_primera_app/editar_turno_tatuaje.html', {'form': form})
 
 @login_required
 def lista_turnos_tatuaje(request):
@@ -134,24 +199,8 @@ class TatuadorListView(ListView):
     template_name = 'mi_primera_app/listar_tatuadores.html'
     context_object_name = 'tatuadores'
 
-class TatuadorCreateView(CreateView):
-    model = Tatuador
-    form_class = TatuadorDataForm
-    template_name = 'mi_primera_app/crear_tatuador.html'
-    success_url = reverse_lazy('listar-tatuadores')
-
 class TatuadorDetailView(DetailView):
     model = Tatuador
     template_name = 'mi_primera_app/detalle_tatuador.html'
     context_object_name = 'tatuador'
 
-class TatuadorUpdateView(UpdateView):
-    model = Tatuador
-    form_class = TatuadorDataForm
-    template_name = 'mi_primera_app/crear_tatuador.html'
-    success_url = reverse_lazy('listar-tatuadores')
-
-class TatuadorDeleteView(DeleteView):
-    model = Tatuador
-    template_name = 'mi_primera_app/eliminar_tatuador.html'
-    success_url = reverse_lazy('listar-tatuadores')

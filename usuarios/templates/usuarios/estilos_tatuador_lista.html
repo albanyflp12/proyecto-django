@@ -1,0 +1,23 @@
+{% extends "padre.html" %}
+
+{% block title %}Mis Estilos{% endblock %}
+
+{% block content %}
+<h2>Mis Estilos</h2>
+
+<a href="{% url 'crear_estilo_tatuaje' %}" class="btn btn-primary mb-3">Crear nuevo estilo</a>
+
+{% if estilos %}
+    <ul class="list-unstyled">
+        {% for estilo in estilos %}
+            <li class="mb-2">
+                {{ estilo.nombre }}
+                <a href="{% url 'detalle_estilo_tatuaje' estilo.pk %}" class="btn btn-sm btn-info ms-2">Ver detalle</a>
+                <a href="{% url 'eliminar_estilo_tatuaje' estilo.pk %}" class="btn btn-sm btn-danger ms-1">Eliminar</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No creaste ningún estilo aún.</p>
+{% endif %}
+{% endblock %}

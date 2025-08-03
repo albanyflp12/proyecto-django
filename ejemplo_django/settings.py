@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mi_primera_app', #Agregamos nuestra app personalizada
     'usuarios', #Agregamos la app de usuarios
+    'ckeditor',
 ]
 
 MIDDLEWARE = [

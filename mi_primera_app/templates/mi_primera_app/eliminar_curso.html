@@ -1,0 +1,14 @@
+{% extends "padre.html" %}
+
+{% block title %}Confirmar eliminación del curso{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2>¿Querés eliminar el curso "{{ object.nombre }}"?</h2>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a href="{% url 'dashboard_profesor' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

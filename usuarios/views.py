@@ -10,9 +10,9 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 
 from django.core.exceptions import ObjectDoesNotExist
-from .forms import UsuarioForm, ProfesorForm, TatuadorRegisterForm, AvatarForm, ProfileUpdateForm
+from .forms import UsuarioForm, ProfesorForm, TatuadorRegisterForm, AvatarForm, ProfileUpdateForm, EstiloTatuajeForm
 from django.views import View
-from .models import Avatar, Usuario, Profesor, Tatuador, UserProfile
+from .models import Avatar, Usuario, Profesor, Tatuador, UserProfile, EstiloTatuaje
 from mi_primera_app.models import Curso, Tatuaje, Inscripcion
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -92,6 +92,42 @@ class TatuadorRegisterView(CreateView):
         login(self.request, user)
         return redirect(self.success_url)
 
+@login_required
+def crear_estilo_tatuaje(request):
+    tatuador = get_object_or_404(Tatuador, user=request.user)
+
+    if request.method == 'POST':
+        form = EstiloTatuajeForm(request.POST)
+        if form.is_valid():
+            estilo = form.save(commit=False)
+            estilo.creador = tatuador
+            estilo.save()
+            return redirect('dashboard_tatuador')
+    else:
+        form = EstiloTatuajeForm()
+
+    return render(request, 'usuarios/crear_estilo_tatuaje.html', {'form': form})
+
+@login_required
+def detalle_estilo_tatuaje(request, pk):
+    estilo = get_object_or_404(EstiloTatuaje, pk=pk)
+    return render(request, 'usuarios/detalle_estilo_tatuaje.html', {'estilo': estilo})
+
+@login_required
+def estilos_tatuador_lista(request):
+    estilos = EstiloTatuaje.objects.filter(creador=request.user.tatuador)
+    return render(request, 'usuarios/estilos_tatuador_lista.html', {'estilos': estilos})
+
+@login_required
+def eliminar_estilo_tatuaje(request, pk):
+    estilo = get_object_or_404(EstiloTatuaje, pk=pk)
+    if request.user.tatuador == estilo.creador:
+        estilo.delete()
+        messages.success(request, 'Estilo eliminado correctamente.')
+    else:
+        messages.error(request, 'No tenés permiso para eliminar este estilo.')
+    return redirect('dashboard_tatuador')
+
 
 @login_required
 def turnos_tatuador(request):
@@ -137,11 +173,11 @@ def dashboard_usuario(request):
 @login_required
 def dashboard_tatuador(request):
     tatuador = Tatuador.objects.get(user=request.user)
-    estilos_inscritos = [tatuador.especialidad]  # Asumiendo que se inscribe por especialidad
-    citas_asignadas = Tatuaje.objects.filter(descripcion__icontains=tatuador.especialidad)
+    estilos = tatuador.estilos_creados.all()
+    citas_asignadas = Tatuaje.objects.filter(tatuador=tatuador)
 
     context = {
-        'estilos_inscritos': estilos_inscritos,
+        'estilos': estilos,
         'citas_asignadas': citas_asignadas,
     }
     return render(request, 'usuarios/dashboard_tatuador.html', context)
@@ -150,15 +186,14 @@ def dashboard_tatuador(request):
 @login_required
 def dashboard_profesor(request):
     profesor = Profesor.objects.get(user=request.user)
-    cursos_impartidos = Curso.objects.filter(profesor=profesor)
+    cursos_impartidos = Curso.objects.filter(profesor=profesor).prefetch_related('inscripciones__usuario')
 
-    cursos_con_alumnos = {}
+    cursos_con_alumnos = []
     for curso in cursos_impartidos:
-        alumnos = Usuario.objects.filter(inscripciones__curso=curso).distinct()
-        cursos_con_alumnos[curso] = alumnos
+        alumnos = [insc.usuario for insc in curso.inscripciones.all()]
+        cursos_con_alumnos.append({'curso': curso, 'alumnos': alumnos})
 
     context = {
-        'cursos_impartidos': cursos_impartidos,
         'cursos_con_alumnos': cursos_con_alumnos,
     }
     return render(request, 'usuarios/dashboard_profesor.html', context)

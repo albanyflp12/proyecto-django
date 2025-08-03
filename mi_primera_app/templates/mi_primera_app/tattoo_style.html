@@ -2,6 +2,17 @@
 
 {% block content %}
     <h2>Estilos de Tatuajes</h2>
-    <p>Aquí podés explorar todos los estilos de tatuajes disponibles y ver qué tatuadores trabajan en cada uno.</p>
-    <!-- Acá podrías mostrar una lista de estilos dinámicamente en el futuro -->
+    <p>Aquí podés explorar todos los estilos de tatuajes disponibles.</p>
+
+    {% if estilos %}
+        <ul>
+        {% for estilo in estilos %}
+            <li>
+                <strong>{{ estilo.nombre }}</strong> - {{ estilo.descripcion|default:"Sin descripción" }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay estilos disponibles por el momento.</p>
+    {% endif %}
 {% endblock %}

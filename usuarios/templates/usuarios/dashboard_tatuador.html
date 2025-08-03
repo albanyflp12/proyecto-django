@@ -5,25 +5,30 @@
 {% block content %}
 <h2>Dashboard Tatuador</h2>
 
-<h3>Estilos Inscritos</h3>
-{% if estilos_inscritos %}
+<h3>Mis Estilos</h3>
+{% if estilos %}
     <ul>
-        {% for estilo in estilos_inscritos %}
-            <li>{{ estilo.nombre }}</li>
+        {% for estilo in estilos %}
+            <li>{{ estilo.nombre }}</li>  
         {% endfor %}
     </ul>
 {% else %}
-    <p>No estás inscrito en ningún estilo.</p>
+    <p>No creaste ningún estilo todavía.</p>
 {% endif %}
 
-<h3>Citas Asignadas</h3>
+<a href="{% url 'estilos_tatuador_lista' %}" class="btn btn-sm btn-primary mt-3">
+    Gestionar estilos
+</a>
+
+<hr>
+
+<h3>Turnos asignados</h3>
 {% if citas_asignadas %}
-    <ul>
-        {% for cita in citas_asignadas %}
-            <li>{{ cita.fecha }} - Cliente: {{ cita.usuario.username }}</li>
-        {% endfor %}
-    </ul>
+    <p>Tenés {{ citas_asignadas|length }} turno{{ citas_asignadas|length|pluralize }} asignado{{ citas_asignadas|length|pluralize }}.</p>
+    <a href="{% url 'turnos_tatuador' %}" class="btn btn-sm btn-primary">
+        Ver turnos
+    </a>
 {% else %}
-    <p>No tenés citas asignadas.</p>
+    <p>No tenés turnos asignados.</p>
 {% endif %}
 {% endblock %}

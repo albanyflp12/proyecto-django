@@ -1,0 +1,9 @@
+{% extends "padre.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ estilo.nombre }}</h2>
+    <p><strong>Descripción:</strong> {{ estilo.descripcion }}</p>
+    <a href="{% url 'dashboard_tatuador' %}" class="btn btn-secondary">Volver al dashboard</a>
+</div>
+{% endblock %}

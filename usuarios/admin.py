@@ -1,9 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Avatar, Usuario, Profesor, Tatuador, EstiloTatuaje, UserProfile
 
-from .models import Avatar
-
-register_models = [Avatar]
+register_models = [Avatar, Usuario, Profesor, Tatuador, EstiloTatuaje, UserProfile]
 
 admin.site.register(register_models)

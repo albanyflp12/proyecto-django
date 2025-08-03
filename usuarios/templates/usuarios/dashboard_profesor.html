@@ -1,29 +1,21 @@
 {% extends "padre.html" %}
-{% load extras %}
 
 {% block title %}Dashboard Profesor{% endblock %}
 
 {% block content %}
-<h2>Dashboard Profesor</h2>
+<div style="padding: 2rem;">
+    <h2 style="margin-bottom: 2rem;">Dashboard del Profesor</h2>
 
-<h3>Cursos Impartidos</h3>
-{% if cursos_impartidos %}
-    <ul>
-        {% for curso in cursos_impartidos %}
-            <li>{{ curso.nombre }} - Inicio: {{ curso.fecha_inicio }}
-                <ul>
-                    {% if cursos_con_alumnos|dictkey:curso %}
-                        {% for alumno in cursos_con_alumnos|dictkey:curso %}
-                            <li>{{ alumno.nombre }} - {{ alumno.email }}</li>
-                        {% endfor %}
-                    {% else %}
-                        <li>No hay alumnos inscritos en este curso.</li>
-                    {% endif %}
-                </ul>
-            </li>
+    <h3>Cursos Impartidos</h3>
+    {% if cursos_con_alumnos %}
+        {% for item in cursos_con_alumnos %}
+            <div style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 8px;">
+                <h4>{{ item.curso.nombre }}</h4>
+                <p>Alumnos inscritos: <strong>{{ item.alumnos|length }}</strong></p>
+            </div>
         {% endfor %}
-    </ul>
-{% else %}
-    <p>No impartís ningún curso aún.</p>
-{% endif %}
+    {% else %}
+        <p>No impartís ningún curso aún.</p>
+    {% endif %}
+</div>
 {% endblock %}

@@ -1,0 +1,34 @@
+{% extends "padre.html" %}
+
+{% block title %}Mis Cursos{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem;">
+    <h2>Mis Cursos</h2>
+
+    {% if cursos %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="padding: 0.5rem;">Nombre</th>
+                    <th style="padding: 0.5rem;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for curso in cursos %}
+                <tr>
+                    <td style="padding: 0.5rem;">{{ curso.nombre }}</td>
+                    <td style="padding: 0.5rem;">
+                        <a href="{% url 'detalle_curso' curso.id %}" class="boton">Ver detalle</a>
+                        <a href="{% url 'editar_curso' curso.id %}" class="boton">Editar</a>
+                        <a href="{% url 'eliminar_curso' curso.id %}" class="boton" style="color: red;">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No has creado ningún curso aún.</p>
+    {% endif %}
+</div>
+{% endblock %}

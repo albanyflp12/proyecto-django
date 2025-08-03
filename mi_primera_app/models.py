@@ -37,6 +37,7 @@ class Tatuaje(models.Model):
     email_contacto = models.EmailField()
     edad_cliente = models.IntegerField()
     tatuador = models.ForeignKey(Tatuador, on_delete=models.SET_NULL, null=True, blank=True)
+    estilo = models.ForeignKey('usuarios.EstiloTatuaje', on_delete=models.SET_NULL, null=True, blank=True)  # Nuevo campo
 
     def __str__(self):
         return f"{self.nombre} - {self.fecha_turno}"

@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-from .models import Avatar, Usuario, Profesor, Tatuador
+from .models import Avatar, Usuario, Profesor, Tatuador, EstiloTatuaje
 
 class UsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
@@ -91,3 +91,11 @@ class ProfileUpdateForm(forms.ModelForm):
         model = User
         fields = ["username", "email", "first_name", "last_name"]
 
+class EstiloTatuajeForm(forms.ModelForm):
+    class Meta:
+        model = EstiloTatuaje
+        fields = ['nombre', 'descripcion']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control'}),
+        }

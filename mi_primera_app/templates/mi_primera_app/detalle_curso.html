@@ -1,24 +1,40 @@
 {% extends "padre.html" %}
-{% block title %} Detalle del curso {% endblock %}
+{% block title %}Detalle del curso{% endblock %}
 
 {% block content %}
-<div style="padding: 2rem;">
-    <h2>{{ curso.nombre }}</h2>
+<div class="container py-4">
+    <h2 class="mb-3">{{ curso.nombre }}</h2>
     <p>{{ curso.descripcion }}</p>
     <p><strong>Fecha de inicio:</strong> {{ curso.fecha_inicio }}</p>
     <p><strong>Duración:</strong> {{ curso.duracion_semanas }} semanas</p>
 
-    <h3>Inscriptos:</h3>
-    {% if inscriptos %}
-        <ul>
-            {% for inscripcion in inscriptos %}
-                <li>{{ inscripcion.usuario.nombre }} - {{ inscripcion.usuario.email }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No hay alumnos inscritos aún.</p>
+    {% if user.is_authenticated and user.userprofile.tipo == 'usuario' %}
+        {% if ya_inscripto %}
+            <div class="alert alert-success mt-3" role="alert">
+                Ya estás inscrito en este curso ✅
+            </div>
+        {% else %}
+            <a href="{% url 'inscribirse_curso' curso.id %}" class="btn btn-primary mt-3">
+                Inscribirme
+            </a>
+        {% endif %}
     {% endif %}
 
-    <a href="{% url 'cursos' %}" style="margin-top: 1rem; display: inline-block;">← Volver a cursos</a>
+    {% if puede_ver_inscriptos %}
+        <h3 class="mt-5">Inscriptos</h3>
+        {% if inscriptos %}
+            <ul class="list-group">
+                {% for inscripcion in inscriptos %}
+                    <li class="list-group-item">
+                        {{ inscripcion.usuario.nombre }} - {{ inscripcion.usuario.email }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No hay alumnos inscriptos aún.</p>
+        {% endif %}
+    {% endif %}
+
+    <a href="{% url 'cursos' %}" class="btn btn-outline-secondary mt-4">← Volver a cursos</a>
 </div>
 {% endblock %}

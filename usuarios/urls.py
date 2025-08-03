@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import CustomLoginView, CustomLogoutView, ProfileView, AvatarUpdateView, ProfileUpdateView, UsuarioRegisterView, ProfesorRegisterView, TatuadorRegisterView, register_home, perfil_redirect, dashboard_profesor, dashboard_tatuador, dashboard_usuario, turnos_tatuador, cancelar_turno_tatuador
+from .views import CustomLoginView, CustomLogoutView, ProfileView, AvatarUpdateView, ProfileUpdateView, UsuarioRegisterView, ProfesorRegisterView, TatuadorRegisterView, register_home, perfil_redirect, dashboard_profesor, dashboard_tatuador, dashboard_usuario, turnos_tatuador, cancelar_turno_tatuador, crear_estilo_tatuaje, detalle_estilo_tatuaje, eliminar_estilo_tatuaje, estilos_tatuador_lista
 
 urlpatterns = [
     
@@ -14,6 +14,10 @@ urlpatterns = [
     path('dashboard/tatuador/', dashboard_tatuador, name='dashboard_tatuador'),
     path('tatuador/turnos/', turnos_tatuador, name='turnos_tatuador'),
     path('tatuador/turnos/cancelar/<int:turno_id>/', cancelar_turno_tatuador, name='cancelar_turno_tatuador'),
+    path('tatuador/crear-estilo/', crear_estilo_tatuaje, name='crear_estilo_tatuaje'),
+    path('tatuador/estilo/<int:pk>/', detalle_estilo_tatuaje, name='detalle_estilo_tatuaje'),
+    path('tatuador/estilo/<int:pk>/eliminar/', eliminar_estilo_tatuaje, name='eliminar_estilo_tatuaje'),
+    path('tatuador/estilos/', estilos_tatuador_lista, name='estilos_tatuador_lista'),
     path('dashboard/profesor/', dashboard_profesor, name='dashboard_profesor'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('profile/', ProfileView.as_view(), name='profile'),

@@ -3,33 +3,59 @@
 {% block title %}Dashboard Usuario{% endblock %}
 
 {% block content %}
-<h2>Dashboard Usuario</h2>
+<div style="padding: 2rem;">
+    <h2>Dashboard Usuario</h2>
 
-<!-- Botones funcionales -->
-<div style="margin-bottom: 20px;">
-    <a href="{% url 'crear-turno-tatuaje' %}" class="btn btn-primary">Crear turno de tatuaje</a>
-    <a href="{% url 'cursos' %}" class="btn btn-secondary">Ver cursos disponibles</a>
+    <!-- Cursos Inscritos -->
+    <section style="margin-bottom: 2rem;">
+        <h3>Cursos Inscritos</h3>
+        {% if cursos_inscritos %}
+            <ul style="list-style-type: none; padding-left: 0;">
+                {% for curso in cursos_inscritos %}
+                    <li style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 6px;">
+                        <strong>{{ curso.nombre }}</strong><br>
+                        <small>Inicio: {{ curso.fecha_inicio|date:"d/m/Y" }}</small><br>
+                        <small>Profesor: {{ curso.profesor.user.email }}</small><br>
+                        <a href="{% url 'detalle_curso' curso.id %}" class="btn btn-sm btn-primary">Ver detalle</a>
+                        <a href="{% url 'cancelar_inscripcion' curso.id %}" class="btn btn-sm btn-primary"
+                           onclick="return confirm('¿Querés cancelar tu inscripción en este curso?');">Cancelar inscripción</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="color: gray;">No estás inscrito en ningún curso.</p>
+        {% endif %}
+    </section>
+
+    <!-- Citas Agendadas -->
+    <section>
+        <h3>Citas Agendadas</h3>
+        {% if citas_agendadas %}
+            <ul style="list-style-type: none; padding-left: 0;">
+                {% for cita in citas_agendadas %}
+                    <li style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 6px;">
+                        <strong>Fecha:</strong> {{ cita.fecha_turno|date:"d/m/Y" }}<br>
+                        <strong>Tatuador:</strong>
+                        {% if cita.tatuador %}
+                            {{ cita.tatuador.user.email }}<br>
+                        {% else %}
+                            Sin tatuador asignado<br>
+                        {% endif %}
+                        <strong>Estilo de tatuaje:</strong>
+                        {% if cita.estilo %}
+                            {{ cita.estilo.nombre }}
+                        {% else %}
+                            No especificado
+                        {% endif %}
+                        <br>
+                        <a href="{% url 'detalle_turno_tatuaje' cita.id %}" class="btn btn-sm btn-primary">Ver detalle</a>
+                        <a href="{% url 'editar_turno_tatuaje' cita.id %}" class="btn btn-sm btn-primary">Editar</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="color: gray;">No tenés citas agendadas.</p>
+        {% endif %}
+    </section>
 </div>
-
-<h3>Cursos Inscritos</h3>
-{% if cursos_inscritos %}
-    <ul>
-        {% for curso in cursos_inscritos %}
-            <li>{{ curso.nombre }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No estás inscrito en ningún curso aún.</p>
-{% endif %}
-
-<h3>Citas Agendadas</h3>
-{% if citas_agendadas %}
-    <ul>
-        {% for cita in citas_agendadas %}
-            <li>{{ cita.fecha_turno|date:"d/m/Y" }} - {{ cita.email_contacto }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No tenés citas agendadas.</p>
-{% endif %}
 {% endblock %}

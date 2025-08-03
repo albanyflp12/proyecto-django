@@ -1,0 +1,16 @@
+{% extends "padre.html" %}
+
+{% block title %}Cancelar Inscripción{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Cancelar inscripción</h2>
+    <p>¿Estás seguro que querés cancelar tu inscripción en el curso: <strong>{{ curso.nombre }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sí, cancelar inscripción</button>
+        <a href="{% url 'dashboard_usuario' %}" class="btn btn-secondary">No, volver al dashboard</a>
+    </form>
+</div>
+{% endblock %}
