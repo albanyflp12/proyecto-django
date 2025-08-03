@@ -29,3 +29,5 @@ Runserver en windows python manage.py runserver
 URL: http://127.0.0.1:8000/
 
 # Link a mi video:
+
+https://www.loom.com/share/8afb8bc370054363827708a18957b475?sid=1b5c14cd-4bad-49db-896d-3f943211c14e

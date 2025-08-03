@@ -6,13 +6,17 @@
 <h2>Turnos asignados</h2>
 
 {% if turnos %}
-    <ul>
+    <ul style="padding-left: 0;">
     {% for turno in turnos %}
-        <li>
-            {{ turno.fecha_turno|date:"d/m/Y" }} - {{ turno.nombre }} (Cliente: {{ turno.email_contacto }})
-            <form method="post" action="{% url 'cancelar_turno_tatuador' turno.id %}" style="display:inline;">
+        <li style="list-style: none; margin-bottom: 1rem; background: #f9f9f9; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+            <strong>Fecha:</strong> {{ turno.fecha_turno|date:"d/m/Y" }}<br>
+            <strong>Cliente:</strong> {{ turno.nombre }} - {{ turno.email_contacto }}<br>
+            <strong>Edad:</strong> {{ turno.edad_cliente }}<br>
+            <strong>Estilo elegido:</strong> {{ turno.estilo.nombre }}<br>
+            <strong>Descripción:</strong> {{ turno.descripcion }}<br>
+            <form method="post" action="{% url 'cancelar_turno_tatuador' turno.id %}" style="margin-top: 0.5rem;">
                 {% csrf_token %}
-                <button type="submit" style="background-color: #dc3545; color: white; border: none; border-radius: 5px; padding: 3px 8px; cursor: pointer;">Cancelar</button>
+                <button type="submit" class="btn btn-sm btn-danger">Cancelar</button>
             </form>
         </li>
     {% endfor %}

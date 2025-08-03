@@ -17,7 +17,7 @@ def home(request):
     return render(request, 'mi_primera_app/home.html')
 
 def tattoo_style(request):
-    estilos = EstiloTatuaje.objects.prefetch_related('creador')  # o el related_name correcto
+    estilos = EstiloTatuaje.objects.prefetch_related('creador')  
     return render(request, 'mi_primera_app/tattoo_style.html', {
         'estilos': estilos,
     })
@@ -86,25 +86,25 @@ def detalle_curso(request, curso_id):
 class CursoUpdateView(UpdateView):
     model = Curso
     form_class = CursoForm
-    template_name = 'mi_primera_app/editar_curso.html'  # o el template que uses para crear/editar cursos
+    template_name = 'mi_primera_app/editar_curso.html'  
 
     def get_success_url(self):
         return reverse_lazy('dashboard_profesor')
 
 class CursoDeleteView(DeleteView):
     model = Curso
-    template_name = 'mi_primera_app/eliminar_curso.html'  # creamos este ahora
+    template_name = 'mi_primera_app/eliminar_curso.html'  
     success_url = reverse_lazy('dashboard_profesor')
 
 @login_required
 def cursos_profesor(request):
-    profesor = request.user.profesor  # Asume que user tiene un profesor asociado
+    profesor = request.user.profesor  
     cursos = Curso.objects.filter(profesor=profesor)
     return render(request, 'mi_primera_app/cursos_profesor.html', {'cursos': cursos})
 
 @login_required
 def inscribirse_curso(request, curso_id):
-    # Validación de tipo de usuario
+    
     if not hasattr(request.user, 'userprofile') or request.user.userprofile.tipo != 'usuario':
         messages.error(request, 'Solo los usuarios pueden inscribirse a cursos.')
         return redirect('cursos')
@@ -145,19 +145,21 @@ def buscar_cursos(request):
 
 @login_required
 def crear_turno_tatuaje(request):
-    tatuador_id = request.GET.get('tatuador_id')
     if request.method == 'POST':
         form = TurnoTatuajeForm(request.POST)
         if form.is_valid():
             turno = form.save(commit=False)
+            estilo = turno.estilo
+            if estilo:
+                tatuadores = Tatuador.objects.filter(estilos_creados__id=estilo.id, disponible=True)
+                if tatuadores.exists():
+                    turno.tatuador = tatuadores.first()
             turno.save()
             return redirect('dashboard_usuario')
     else:
-        initial = {}
-        if tatuador_id:
-            initial['tatuador'] = tatuador_id
-        form = TurnoTatuajeForm(initial=initial)
+        form = TurnoTatuajeForm()
     return render(request, 'mi_primera_app/crear_turno_tatuaje.html', {'form': form})
+
 
 @login_required
 def detalle_turno_tatuaje(request, turno_id):

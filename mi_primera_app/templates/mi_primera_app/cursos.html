@@ -16,19 +16,11 @@
 
         <form method="GET" action="{% url 'buscar-cursos' %}" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
             <input type="text" name="nombre" placeholder="Buscar curso..." value="{{ nombre }}" style="flex: 1; padding: 0.5rem;">
-            <button type="submit" style="padding: 0.5rem 1rem; background-color: #007bff; color: white; border: none; border-radius: 5px;">Buscar</button>
+            <button type="submit" class="btn btn-sm btn-primary">Buscar</button>
         </form>
 
         {% if user.is_authenticated and user.userprofile.tipo == 'profesor' %}
-            <a href="{% url 'crear-curso' %}" class="btn btn-success" style="
-                display: inline-block;
-                margin-bottom: 1rem;
-                padding: 0.5rem 1rem;
-                background-color: #28a745;
-                color: white;
-                border-radius: 5px;
-                text-decoration: none;
-            ">
+            <a href="{% url 'crear-curso' %}" class="btn btn-sm btn-success mb-3">
                 Crear nuevo curso
             </a>
         {% endif %}
@@ -38,38 +30,24 @@
             {% for curso in cursos %}
                 <li style="margin-bottom: 1rem;">
                     <strong>{{ curso.nombre }}</strong> - Inicio: {{ curso.fecha_inicio }}
-                    {% if user.is_authenticated %}
-    {% if user.userprofile.tipo == 'usuario' %}
-        <br>
-        <a href="{% url 'inscribirse_curso' curso.id %}" class="btn btn-primary" style="
-            margin-top: 0.5rem;
-            display: inline-block;
-            padding: 0.3rem 1rem;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-        ">
-            Inscribirse
-        </a>
-    {% endif %}
-{% else %}
-    <br>
-    <a href="{% url 'login' %}?next={% url 'inscribirse_curso' curso.id %}" class="btn btn-outline-primary" style="
-        margin-top: 0.5rem;
-        display: inline-block;
-        padding: 0.3rem 1rem;
-        border: 1px solid #007bff;
-        color: #007bff;
-        border-radius: 5px;
-        text-decoration: none;
-    ">
-        Inicia sesión para inscribirte
-    </a>
-{% endif %}
+                    
+                    {% if user.is_authenticated and user.userprofile.tipo == 'usuario' %}
+                        <br>
+                        <a href="{% url 'inscribirse_curso' curso.id %}" class="btn btn-sm btn-primary mt-2">
+                            Inscribirse
+                        </a>
+                    {% elif not user.is_authenticated %}
+                        <br>
+                        <a href="{% url 'login' %}?next={% url 'inscribirse_curso' curso.id %}" class="btn btn-sm btn-primary mt-2">
+                            Inicia sesión para inscribirte
+                        </a>
+                    {% endif %}
                 </li>
             {% empty %}
-                <li>No hay cursos disponibles.</li>
+                <li>No hay cursos disponibles con ese nombre.</li>
+                <div class="mt-3">
+                    <a href="{% url 'cursos' %}" class="btn btn-sm btn-primary">Ver cursos disponibles</a>
+                </div>
             {% endfor %}
         </ul>
     </div>

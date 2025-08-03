@@ -19,7 +19,6 @@
 
 <a href="{% url 'listar-tatuadores' %}" class="btn btn-primary">Volver a la lista</a>
 
-<!-- Botón Pedir Turno -->
 {% if user.is_authenticated %}
     <a href="{% url 'crear-turno-tatuaje' %}?tatuador_id={{ tatuador.pk }}" class="btn btn-primary" style="margin-left: 1rem;">Pedir turno</a>
 {% else %}

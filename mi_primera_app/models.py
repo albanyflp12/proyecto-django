@@ -32,16 +32,15 @@ class Curso(models.Model):
 
 class Tatuaje(models.Model):
     nombre = models.CharField(max_length=100)
-    descripcion = models.TextField(default='Sin descripción disponible')
+    descripcion = models.TextField(default='Sin descripción disponible', blank=True)
     fecha_turno = models.DateField()
     email_contacto = models.EmailField()
-    edad_cliente = models.IntegerField()
-    tatuador = models.ForeignKey(Tatuador, on_delete=models.SET_NULL, null=True, blank=True)
-    estilo = models.ForeignKey('usuarios.EstiloTatuaje', on_delete=models.SET_NULL, null=True, blank=True)  # Nuevo campo
+    edad_cliente = models.PositiveIntegerField()
+    tatuador = models.ForeignKey('usuarios.Tatuador', on_delete=models.SET_NULL, null=True, blank=True)
+    estilo = models.ForeignKey('usuarios.EstiloTatuaje', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.nombre} - {self.fecha_turno}"
-    
+        return f"{self.nombre} - {self.fecha_turno.strftime('%d/%m/%Y')}"
 
 class Inscripcion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='inscripciones')

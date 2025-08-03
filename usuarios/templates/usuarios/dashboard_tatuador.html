@@ -16,7 +16,7 @@
     <p>No creaste ningún estilo todavía.</p>
 {% endif %}
 
-<a href="{% url 'estilos_tatuador_lista' %}" class="btn btn-sm btn-primary mt-3">
+<a href="{% url 'estilos_tatuador_lista' %}" class="btn btn-primary btn-lg mt-3">
     Gestionar estilos
 </a>
 
@@ -25,7 +25,7 @@
 <h3>Turnos asignados</h3>
 {% if citas_asignadas %}
     <p>Tenés {{ citas_asignadas|length }} turno{{ citas_asignadas|length|pluralize }} asignado{{ citas_asignadas|length|pluralize }}.</p>
-    <a href="{% url 'turnos_tatuador' %}" class="btn btn-sm btn-primary">
+    <a href="{% url 'turnos_tatuador' %}" class="btn btn-primary btn-lg">
         Ver turnos
     </a>
 {% else %}

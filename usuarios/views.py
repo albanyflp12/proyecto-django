@@ -226,7 +226,6 @@ class CustomLoginView(LoginView):
     template_name = 'usuarios/login.html'
 
     def get_success_url(self):
-        # Redirige a perfil_redirect que a su vez redirige al dashboard
         return reverse_lazy('perfil_redirect')
     
 class CustomLogoutView(LogoutView):

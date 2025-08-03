@@ -7,7 +7,7 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Guardar</button>
+    <button type="submit" class="btn btn-primary btn-lg mt-3">Guardar</button>
   </form>
-  <a href="{% url 'dashboard_tatuador' %}">Volver al Dashboard</a>
+  <a href="{% url 'dashboard_tatuador' %}" class="btn btn-secondary mt-3 d-inline-block">Volver al Dashboard</a>
 {% endblock %}
