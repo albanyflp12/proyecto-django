@@ -19,6 +19,7 @@ Este es un proyecto web desarrollado con Django como entrega final del curso de 
 # Crear entorno virtual e ingresar a pagina
 
 En MAC: source venv/bin/activate
+
 En Windows: venv\Scripts\Activate.ps1
 
 Github: https://github.com/albanyflp12/proyecto-django
